@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurer un Backup - Discord Server Backup Tool</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Discord Server Backup</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/backup">Créer un Backup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/restore">Restaurer un Backup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/list">Liste des Backups</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="bg-dark p-4 rounded mb-4">
+            <h2>Restaurer un Backup</h2>
+            <p class="lead">Restaurez la structure d'un serveur à partir d'une sauvegarde</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/restore" method="POST">
+                            <div class="mb-3">
+                                <label for="token" class="form-label">Token Discord</label>
+                                <input type="password" class="form-control" id="token" name="token" required 
+                                       placeholder="Votre token Discord">
+                                <div class="form-text">Ne partagez jamais votre token avec qui que ce soit.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="server_id" class="form-label">ID du Serveur de destination</label>
+                                <input type="text" class="form-control" id="server_id" name="server_id" required 
+                                       placeholder="ID numérique du serveur où restaurer le backup">
+                                <div class="form-text">
+                                    L'identifiant numérique du serveur où vous souhaitez restaurer la sauvegarde.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="backup_file" class="form-label">Fichier de sauvegarde</label>
+                                <select class="form-select" id="backup_file" name="backup_file" required>
+                                    <option value="" disabled selected>Choisir un fichier de sauvegarde</option>
+                                    {% for backup in backups %}
+                                        <option value="{{ backup }}">{{ backup.split('/')[-1] }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    Sélectionnez le fichier de sauvegarde à restaurer. Si aucun fichier n'est disponible, 
+                                    vous devez d'abord créer une sauvegarde.
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-danger">
+                                <h5>⚠️ Attention</h5>
+                                <p><strong>Cette opération va écraser la structure existante du serveur de destination.</strong> 
+                                Les canaux, rôles, et permissions actuels seront supprimés et remplacés par ceux du backup.</p>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger">Restaurer le Backup</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Avant de restaurer</h5>
+                        <p>Assurez-vous que :</p>
+                        <ul>
+                            <li>Vous avez les permissions d'administrateur sur le serveur de destination</li>
+                            <li>Vous êtes prêt à perdre la structure actuelle du serveur cible</li>
+                            <li>Vous avez sauvegardé toutes les informations importantes du serveur cible</li>
+                        </ul>
+                        <div class="alert alert-info mt-3 mb-0">
+                            La restauration peut prendre quelques minutes en fonction de la taille du serveur.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Informations importantes</h5>
+                <p>Lors de la restauration d'un serveur :</p>
+                <ul>
+                    <li>Tous les canaux existants seront supprimés (sauf les canaux système)</li>
+                    <li>Tous les rôles existants seront supprimés (sauf le rôle @everyone)</li>
+                    <li>Les permissions des canaux et rôles seront recréées en fonction de la sauvegarde</li>
+                    <li>Les émojis et stickers seront restaurés si possible</li>
+                    <li>Les membres du serveur ne seront pas affectés</li>
+                    <li>Les messages et l'historique ne sont pas inclus dans les sauvegardes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-center text-white-50 py-3 mt-5">
+        <div class="container">
+            <p>Discord Server Backup Tool &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

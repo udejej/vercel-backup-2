@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Server Copier - Modern</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0f0f23;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #2d3436;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .modern-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: slideInDown 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #636e72;
+            font-weight: 400;
+            margin-bottom: 30px;
+            animation: slideInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: #74b9ff;
+            font-weight: 500;
+            animation: fadeIn 1s ease-out 0.4s both;
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-section {
+            animation: slideInLeft 1s ease-out 0.6s both;
+        }
+
+        .info-section {
+            animation: slideInRight 1s ease-out 0.8s both;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .card-header-modern {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 25px;
+            border: none;
+            position: relative;
+        }
+
+        .card-header-modern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--secondary-gradient);
+        }
+
+        .card-header-modern h3 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .modern-form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .modern-form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .modern-btn {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .modern-btn:hover::before {
+            left: 100%;
+        }
+
+        .modern-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .alert-modern {
+            border: none;
+            border-radius: 12px;
+            border-left: 4px solid;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 99, 132, 0.1) 100%);
+            border-left-color: #ff6b6b;
+            color: #d63031;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.1) 0%, rgba(0, 206, 201, 0.1) 100%);
+            border-left-color: #00b894;
+            color: #00b894;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.1) 0%, rgba(81, 163, 255, 0.1) 100%);
+            border-left-color: #74b9ff;
+            color: #0984e3;
+        }
+
+        .form-text {
+            color: #636e72;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.1) 0%, rgba(81, 163, 255, 0.1) 100%);
+            border: 1px solid rgba(116, 185, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #74b9ff;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-modern alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <i class="fab fa-discord"></i> Discord Server Copier - DESIGN MODERNE ✨
+            </h1>
+            <p class="hero-subtitle">Version moderne avec arrière-plan gradiant et animations</p>
+            <p class="hero-description">
+                <i class="fas fa-magic"></i> Structure complète • Canaux • Rôles • Émojis • Stickers
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8 form-section">
+                <div class="modern-card">
+                    <div class="card-header-modern">
+                        <h3><i class="fas fa-copy"></i> Copier un serveur</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/" method="POST">
+                            <div class="mb-4">
+                                <label for="token" class="form-label fw-semibold">
+                                    <i class="fas fa-key text-primary"></i> Token Discord
+                                </label>
+                                <input type="password" class="form-control modern-form-control" id="token" name="token" required 
+                                       placeholder="Entrez votre token Discord">
+                                <div class="form-text">
+                                    <i class="fas fa-shield-alt"></i> Votre token reste sécurisé et n'est jamais stocké
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="source_server_id" class="form-label fw-semibold">
+                                    <i class="fas fa-server text-info"></i> Serveur Source
+                                </label>
+                                <input type="text" class="form-control modern-form-control" id="source_server_id" name="source_server_id" required 
+                                       placeholder="ID du serveur à copier">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> ID numérique du serveur que vous voulez dupliquer
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="target_server_id" class="form-label fw-semibold">
+                                    <i class="fas fa-bullseye text-success"></i> Serveur Destination
+                                </label>
+                                <input type="text" class="form-control modern-form-control" id="target_server_id" name="target_server_id" required 
+                                       placeholder="ID de votre serveur destination">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> ID du serveur où coller la structure copiée
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-danger alert-modern mb-4">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Attention Important</h5>
+                                <p class="mb-0"><strong>Cette opération remplacera entièrement la structure de votre serveur destination.</strong> 
+                                Tous les canaux, rôles et permissions existants seront supprimés.</p>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn modern-btn">
+                                    <i class="fas fa-rocket"></i> Lancer la Copie
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 info-section">
+                <div class="modern-card mb-4">
+                    <div class="card-header-modern">
+                        <h4><i class="fas fa-list-check"></i> Éléments copiés</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Structure des catégories et canaux</span>
+                        </div>
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Rôles et leurs permissions</span>
+                        </div>
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Émojis personnalisés</span>
+                        </div>
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Stickers du serveur</span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-times-circle text-danger me-2"></i>
+                            <span>Messages et historique</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-times-circle text-danger me-2"></i>
+                            <span>Membres du serveur</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modern-card">
+                    <div class="card-header-modern">
+                        <h4><i class="fas fa-question-circle"></i> Guide rapide</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="guide-section mb-4">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="fas fa-key"></i> Obtenir le token Discord
+                            </h6>
+                            <div class="small text-muted">
+                                <div class="step-item mb-2">
+                                    <span class="badge bg-primary me-2">1</span>
+                                    Ouvrir Discord (navigateur)
+                                </div>
+                                <div class="step-item mb-2">
+                                    <span class="badge bg-primary me-2">2</span>
+                                    Appuyer sur F12
+                                </div>
+                                <div class="step-item mb-2">
+                                    <span class="badge bg-primary me-2">3</span>
+                                    Onglet "Network"
+                                </div>
+                                <div class="step-item mb-2">
+                                    <span class="badge bg-primary me-2">4</span>
+                                    Envoyer un message
+                                </div>
+                                <div class="step-item">
+                                    <span class="badge bg-primary me-2">5</span>
+                                    Chercher "Authorization"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-section">
+                            <h6 class="fw-bold text-info mb-3">
+                                <i class="fas fa-hashtag"></i> Obtenir l'ID serveur
+                            </h6>
+                            <div class="small text-muted">
+                                <div class="step-item mb-2">
+                                    <span class="badge bg-info me-2">1</span>
+                                    Mode développeur (Paramètres)
+                                </div>
+                                <div class="step-item">
+                                    <span class="badge bg-info me-2">2</span>
+                                    Clic droit → "Copier l'ID"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="modern-card">
+                    <div class="card-body p-5 text-center">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h5 class="feature-title">100% Sécurisé</h5>
+                                <p class="feature-description">
+                                    Votre token n'est jamais stocké et reste complètement privé
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <h5 class="feature-title">Ultra Rapide</h5>
+                                <p class="feature-description">
+                                    Copie intelligente avec respect des limites API Discord
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-icon">
+                                    <i class="fas fa-magic"></i>
+                                </div>
+                                <h5 class="feature-title">Complet</h5>
+                                <p class="feature-description">
+                                    Structure complète, rôles, permissions et contenus personnalisés
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info alert-modern mt-4">
+                            <h6><i class="fas fa-info-circle"></i> Prérequis</h6>
+                            <p class="mb-0">
+                                Vous devez être <strong>administrateur</strong> des deux serveurs et posséder un <strong>token Discord valide</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

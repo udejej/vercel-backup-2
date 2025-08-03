@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Backups - Discord Server Backup Tool</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Discord Server Backup</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/backup">Créer un Backup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/restore">Restaurer un Backup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/list">Liste des Backups</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="bg-dark p-4 rounded mb-4">
+            <h2>Liste des Backups</h2>
+            <p class="lead">Gérez vos sauvegardes de serveurs Discord</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title m-0">Sauvegardes disponibles</h5>
+                    <a href="/backup" class="btn btn-primary btn-sm">Créer un nouveau backup</a>
+                </div>
+
+                {% if backups %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom du serveur</th>
+                                    <th>Fichier</th>
+                                    <th>Date</th>
+                                    <th>Taille</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for backup in backups %}
+                                <tr>
+                                    <td>{{ backup.server_name }}</td>
+                                    <td>{{ backup.filename }}</td>
+                                    <td>{{ backup.date }}</td>
+                                    <td>{{ backup.size }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/download/{{ backup.filename }}" class="btn btn-sm btn-primary">
+                                                Télécharger
+                                            </a>
+                                            <a href="/restore" class="btn btn-sm btn-success">
+                                                Restaurer
+                                            </a>
+                                            <a href="/delete/{{ backup.filename }}" class="btn btn-sm btn-danger" 
+                                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde ?');">
+                                                Supprimer
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>Aucune sauvegarde n'est disponible. <a href="/backup">Créez votre première sauvegarde</a>.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Gestion des sauvegardes</h5>
+                <p>Sur cette page, vous pouvez :</p>
+                <ul>
+                    <li><strong>Télécharger</strong> vos sauvegardes pour les conserver en lieu sûr</li>
+                    <li><strong>Restaurer</strong> directement une sauvegarde sur un serveur</li>
+                    <li><strong>Supprimer</strong> les sauvegardes dont vous n'avez plus besoin</li>
+                </ul>
+                <div class="alert alert-warning">
+                    <strong>Note :</strong> La suppression d'une sauvegarde est définitive et ne peut pas être annulée.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-center text-white-50 py-3 mt-5">
+        <div class="container">
+            <p>Discord Server Backup Tool &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
