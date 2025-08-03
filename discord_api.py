@@ -180,7 +180,10 @@ class DiscordAPI:
     
     async def get_server(self, server_id: str) -> Optional[Dict]:
         """Get information about a server."""
-        return await self._request("GET", f"/guilds/{server_id}")
+        result = await self._request("GET", f"/guilds/{server_id}")
+        if isinstance(result, dict):
+            return result
+        return None
     
     async def get_channels(self, server_id: str) -> List[Dict]:
         """Get all channels in a server."""
@@ -274,7 +277,7 @@ class DiscordAPI:
             # Create the role
             new_role = await self._request("POST", f"/guilds/{server_id}/roles", json=role_data)
             
-            if new_role:
+            if new_role and isinstance(new_role, dict):
                 role_id_map[role['id']] = new_role['id']
                 logger.info(f"Created role: {role['name']}")
             else:
@@ -314,7 +317,7 @@ class DiscordAPI:
             
             new_category = await self._request("POST", f"/guilds/{server_id}/channels", json=category_data)
             
-            if new_category:
+            if new_category and isinstance(new_category, dict):
                 category_id_map[category['id']] = new_category['id']
                 logger.info(f"Created category: {category['name']}")
             else:
