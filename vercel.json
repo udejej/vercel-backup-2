@@ -2,19 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/test-simple.py",
+      "src": "api/simple-backup.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/test-simple.py"
+      "dest": "/api/simple-backup.py"
     }
-  ],
-  "functions": {
-    "api/*.py": {
-      "runtime": "python3.11"
-    }
-  }
+  ]
 }
