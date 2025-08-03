@@ -33,40 +33,23 @@ def index():
             flash('Les IDs des serveurs source et cible doivent être différents.', 'danger')
             return redirect(url_for('index'))
         
-        # Démarrer le processus de copie en arrière-plan dans un thread
-        # pour éviter les timeouts du serveur web
-        def run_copy_async():
-            try:
-                # Créer une nouvelle boucle d'événements pour ce thread
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+        # Version Vercel - Test rapide seulement (limitation 10 secondes)
+        try:
+            result = asyncio.run(asyncio.wait_for(
+                validate_servers_quick(token, source_server_id, target_server_id),
+                timeout=8  # 8 secondes max pour Vercel
+            ))
+            
+            if result['success']:
+                flash(f"✅ Serveurs validés: {result['source_name']} → {result['target_name']}", 'success')
+                flash("⚠️ Pour la copie complète, utilisez Replit (limitations de temps Vercel)", 'warning')
+            else:
+                flash(f"❌ Erreur: {result['message']}", 'danger')
                 
-                # Configurer un délai d'attente plus long (5 minutes)
-                result, message = loop.run_until_complete(
-                    asyncio.wait_for(
-                        copy_server(token, source_server_id, target_server_id),
-                        timeout=300  # 5 minutes max
-                    )
-                )
-                loop.close()
-                
-                # Stocker le résultat dans la session pour l'afficher à l'utilisateur lors du prochain chargement de page
-                if result:
-                    session['copy_result'] = {'success': True, 'message': 'Serveur copié avec succès!'}
-                else:
-                    session['copy_result'] = {'success': False, 'message': f'Erreur: {message}'}
-                
-            except Exception as e:
-                logger.error(f"Erreur pendant la copie: {str(e)}")
-                session['copy_result'] = {'success': False, 'message': f'Une erreur est survenue: {str(e)}'}
-        
-        # Informer l'utilisateur que la copie a commencé
-        flash('Copie du serveur Discord en cours... Cette opération peut prendre plusieurs minutes. Vous pouvez actualiser cette page pour voir le statut.', 'info')
-        
-        # Lancer le processus en arrière-plan
-        thread = threading.Thread(target=run_copy_async)
-        thread.daemon = True
-        thread.start()
+        except asyncio.TimeoutError:
+            flash("⏱️ Validation timeout sur Vercel. Utilisez Replit pour les opérations complètes.", 'warning')
+        except Exception as e:
+            flash(f"❌ Erreur: {str(e)}", 'danger')
         
         return redirect(url_for('index'))
     
@@ -79,6 +62,32 @@ def index():
             flash(result['message'], 'danger')
     
     return render_template('index.html')
+
+async def validate_servers_quick(token, source_server_id, target_server_id):
+    """Validation rapide pour Vercel (< 8 secondes)"""
+    discord_api = DiscordAPI(token)
+    
+    try:
+        # Test rapide des serveurs uniquement
+        source_server = await discord_api.get_server(source_server_id)
+        if not source_server:
+            return {'success': False, 'message': f'Serveur source inaccessible (ID: {source_server_id})'}
+        
+        target_server = await discord_api.get_server(target_server_id)
+        if not target_server:
+            return {'success': False, 'message': f'Serveur cible inaccessible (ID: {target_server_id})'}
+        
+        await discord_api.close()
+        
+        return {
+            'success': True,
+            'source_name': source_server.get('name', 'Unknown'),
+            'target_name': target_server.get('name', 'Unknown')
+        }
+    
+    except Exception as e:
+        await discord_api.close()
+        return {'success': False, 'message': str(e)}
 
 async def copy_server(token, source_server_id, target_server_id):
     """
